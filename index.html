@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Knitting App — Coming Soon</title>
+  <meta name="description" content="Import any pattern. Track every row. Never lose your place again.">
+  <meta name="theme-color" content="#3d5244">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@1,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --sage:       #9DB2A2;
+      --sage-mid:   #5e7565;
+      --sage-dark:  #3d5244;
+      --sage-deep:  #2e4238;
+      --cream:      #FCFAF7;
+      --taupe:      #E5E1DA;
+      --charcoal:   #333333;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--sage-deep);
+    }
+
+    /* ── Page shell ── */
+    .page {
+      min-height: 100vh;
+      background: linear-gradient(160deg, var(--sage-deep) 0%, var(--sage-dark) 30%, var(--sage-mid) 70%, var(--sage) 100%);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Dot-grid texture */
+    .page::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: radial-gradient(circle, rgba(255,255,255,0.055) 1px, transparent 1px);
+      background-size: 24px 24px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Vignette */
+    .page::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.22) 100%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Nav ── */
+    nav {
+      position: relative;
+      z-index: 10;
+      padding: 20px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+
+    .nav-logo img {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+    }
+
+    .nav-logo span {
+      font-family: 'Newsreader', Georgia, serif;
+      font-style: italic;
+      font-size: 16px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.9);
+    }
+
+    .nav-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.45);
+    }
+
+    /* ── Hero ── */
+    main {
+      position: relative;
+      z-index: 10;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 48px 24px 60px;
+      gap: 0;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 20px;
+      padding: 5px 14px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.75);
+      margin-bottom: 24px;
+    }
+
+    .badge-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--sage);
+      box-shadow: 0 0 7px rgba(157,178,162,0.9);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    h1 {
+      font-family: 'Newsreader', Georgia, serif;
+      font-style: italic;
+      font-weight: 700;
+      font-size: clamp(36px, 7vw, 58px);
+      line-height: 1.12;
+      letter-spacing: -0.5px;
+      color: white;
+      max-width: 620px;
+      margin-bottom: 18px;
+    }
+
+    h1 em {
+      font-style: normal;
+      color: rgba(255,255,255,0.6);
+    }
+
+    .subhead {
+      font-size: clamp(14px, 2.5vw, 17px);
+      color: rgba(255,255,255,0.65);
+      line-height: 1.65;
+      max-width: 400px;
+      margin-bottom: 36px;
+    }
+
+    /* ── Email form ── */
+    form {
+      display: flex;
+      gap: 8px;
+      width: 100%;
+      max-width: 440px;
+      margin-bottom: 14px;
+    }
+
+    form input {
+      flex: 1;
+      min-width: 0;
+      background: rgba(255,255,255,0.1);
+      border: 1.5px solid rgba(255,255,255,0.2);
+      border-radius: 11px;
+      padding: 13px 16px;
+      font-size: 15px;
+      font-family: inherit;
+      color: white;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    form input::placeholder { color: rgba(255,255,255,0.4); }
+
+    form input:focus {
+      border-color: rgba(255,255,255,0.5);
+      background: rgba(255,255,255,0.15);
+    }
+
+    form button {
+      background: white;
+      color: var(--sage-dark);
+      border: none;
+      border-radius: 11px;
+      padding: 13px 22px;
+      font-size: 15px;
+      font-family: inherit;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: opacity 0.2s, transform 0.1s;
+    }
+
+    form button:hover { opacity: 0.9; }
+    form button:active { transform: scale(0.98); }
+    form button:disabled { opacity: 0.6; cursor: default; }
+
+    /* ── Feedback messages ── */
+    .feedback {
+      font-size: 13px;
+      min-height: 20px;
+      margin-bottom: 16px;
+      transition: opacity 0.3s;
+    }
+
+    .feedback.success { color: rgba(255,255,255,0.85); }
+    .feedback.error   { color: #fca5a5; }
+
+    /* ── Platform note ── */
+    .platform-note {
+      font-size: 11px;
+      color: rgba(255,255,255,0.35);
+      letter-spacing: 0.06em;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      margin-bottom: 48px;
+    }
+
+    .platform-note span { opacity: 0.4; }
+
+    /* ── Features ── */
+    .features {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px 24px;
+    }
+
+    .feature {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: rgba(255,255,255,0.5);
+    }
+
+    .feature-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    /* ── Footer ── */
+    footer {
+      position: relative;
+      z-index: 10;
+      padding: 16px 28px;
+      border-top: 1px solid rgba(255,255,255,0.07);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+      font-size: 11px;
+      color: rgba(255,255,255,0.28);
+    }
+
+    footer a {
+      color: rgba(255,255,255,0.4);
+      text-decoration: none;
+    }
+
+    footer a:hover { color: rgba(255,255,255,0.65); }
+
+    /* ── Responsive ── */
+    @media (max-width: 480px) {
+      form { flex-direction: column; }
+      form button { width: 100%; }
+      .features { gap: 10px 16px; }
+      nav { padding: 16px 20px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <nav>
+      <a class="nav-logo" href="#">
+        <!-- Swap src for your real logo path once deployed -->
+        <img src="tka-logo.png" alt="The Knitting App logo" onerror="this.style.display='none'">
+        <span>The Knitting App</span>
+      </a>
+      <div class="nav-label">Coming soon</div>
+    </nav>
+
+    <main>
+      <div class="badge">
+        <div class="badge-dot"></div>
+        Coming soon
+      </div>
+
+      <h1>Made for knitters,<br><em>by</em> knitters.</h1>
+
+      <p class="subhead">Import any pattern. Track every row. Never lose your place again.</p>
+
+      <form id="waitlist-form" novalidate>
+        <input type="email" id="email-input" placeholder="your@email.com" autocomplete="email" required>
+        <button type="submit" id="submit-btn">Join the waitlist</button>
+      </form>
+
+      <div class="feedback" id="feedback" aria-live="polite"></div>
+
+      <div class="platform-note">
+        Web <span>·</span> iOS <span>·</span> Android <span>·</span> Free to start
+      </div>
+
+      <div class="features">
+        <div class="feature"><div class="feature-icon">📄</div>Import PDFs &amp; photos</div>
+        <div class="feature"><div class="feature-icon">✨</div>Reads any pattern format</div>
+        <div class="feature"><div class="feature-icon">✅</div>Track row by row</div>
+        <div class="feature"><div class="feature-icon">🧶</div>Full Ravelry integration</div>
+      </div>
+    </main>
+
+    <footer>
+      <span>© 2026 The Knitting App</span>
+      <a href="mailto:hello@theknittingapp.com">hello@theknittingapp.com</a>
+    </footer>
+  </div>
+
+  <script>
+    // Replace this URL with your production Rails API URL
+    const API_URL = 'YOUR_API_URL/api/v1/waitlist';
+
+    const form = document.getElementById('waitlist-form');
+    const emailInput = document.getElementById('email-input');
+    const submitBtn = document.getElementById('submit-btn');
+    const feedback = document.getElementById('feedback');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const email = emailInput.value.trim();
+      if (!email) return;
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Joining...';
+      feedback.textContent = '';
+      feedback.className = 'feedback';
+
+      try {
+        const res = await fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email })
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          feedback.textContent = data.message || "You're on the list!";
+          feedback.className = 'feedback success';
+          emailInput.value = '';
+          submitBtn.textContent = 'Done ✓';
+        } else {
+          feedback.textContent = data.error || 'Something went wrong. Please try again.';
+          feedback.className = 'feedback error';
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Join the waitlist';
+        }
+      } catch {
+        feedback.textContent = 'Something went wrong. Please try again.';
+        feedback.className = 'feedback error';
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Join the waitlist';
+      }
+    });
+  </script>
+</body>
+</html>
